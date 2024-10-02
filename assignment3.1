@@ -1,0 +1,70 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+void printCombinations(const vector<vector<int>>& combinations, int sum) {
+    cout << "Combinations to make sum " << sum << " are:" << endl;
+    for (const auto& combination : combinations) {
+        for (int coin : combination) {
+            cout << coin << " ";
+        }
+        cout << endl;
+    }
+}
+
+void findCombinations(int sum, const vector<int>& coins, vector<int>& combination, vector<vector<int>>& combinations, int index) {
+    if (sum == 0) {
+        combinations.push_back(combination);
+        return;
+    }
+    if (sum < 0 || index >= coins.size()) {
+        return;
+    }
+
+    combination.push_back(coins[index]);
+    findCombinations(sum - coins[index], coins, combination, combinations, index);
+
+    combination.pop_back();
+    findCombinations(sum, coins, combination, combinations, index + 1);
+}
+
+int coinChange(const vector<int>& coins, int sum) {
+    vector<int> dp(sum + 1, 0);
+    vector<vector<int>> combinations;
+    vector<int> combination;
+
+    dp[0] = 1;
+    for (int coin : coins) {
+        for (int j = coin; j <= sum; j++) {
+            dp[j] += dp[j - coin];
+        }
+    }
+
+    findCombinations(sum, coins, combination, combinations, 0);
+
+    printCombinations(combinations, sum);
+
+    return dp[sum];
+}
+
+int main() {
+    int N, sum;
+
+    cout << "Enter the number of different coins: ";
+    cin >> N;
+
+    vector<int> coins(N);
+    cout << "Enter the coin values: ";
+    for (int i = 0; i < N; i++) {
+        cin >> coins[i];
+    }
+
+    cout << "Enter the sum to be made: ";
+    cin >> sum;
+
+    int ways = coinChange(coins, sum);
+    cout << "Number of ways to make sum " << sum << " is: " << ways << endl;
+
+    return 0;
+}
