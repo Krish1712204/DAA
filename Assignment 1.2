@@ -1,0 +1,67 @@
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+void mergeAndMoveZeroes(vector<int>& arr, int low, int mid, int high) {
+    vector<int> temp;
+    int i = low, j = mid + 1;
+
+    // Merge non-zero elements
+    while (i <= mid && j <= high) {
+        if (arr[i] != 0)
+            temp.push_back(arr[i]);
+        i++;
+    }
+
+    while (j <= high) {
+        if (arr[j] != 0)
+            temp.push_back(arr[j]);
+        j++;
+    }
+
+    // Add zero elements
+    for (int k = low; k <= high; k++) {
+        if (arr[k] == 0)
+            temp.push_back(arr[k]);
+    }
+
+    // Copy the merged elements back into the original array
+    for (int k = 0; k < temp.size(); k++) {
+        arr[low + k] = temp[k];
+    }
+}
+
+void pushZeroesToEnd(vector<int>& arr, int low, int high) {
+    if (low >= high) return;
+
+    int mid = (high +low) / 2;
+
+    // Recursively divide the array
+    pushZeroesToEnd(arr, low, mid);
+    pushZeroesToEnd(arr, mid + 1, high);
+
+    // Merge the results
+    mergeAndMoveZeroes(arr, low, mid, high);
+}
+
+int main() {
+    int n;
+    cout << "Enter the number of elements in the array: ";
+    cin >> n;
+
+    vector<int> arr(n);
+    cout << "Enter the elements of the array:\n";
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+    }
+
+    pushZeroesToEnd(arr, 0, n - 1);
+
+    cout << "Array after moving zeroes to the end:\n";
+    for (int i : arr) {
+        cout << i << " ";
+    }
+
+    return 0;
+}
